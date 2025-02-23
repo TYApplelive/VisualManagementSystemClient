@@ -1,10 +1,13 @@
 <template>
-    <div class="App">
-        <h1>App Component</h1>
-    </div>
+  <div class="App">
+    <RouterView />
+  </div>
 </template>
 
-<script setup lang="ts">
-
-</script>
-<style lang="less" scoped></style>
+<script setup lang="ts"></script>
+<style lang="less" scoped>
+.App {
+  width: 100vw;
+  height: 100vh;
+}
+</style>
