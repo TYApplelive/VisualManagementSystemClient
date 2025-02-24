@@ -12,7 +12,7 @@ import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import emitter from '@/utils/emitter';
 
 // 页面选择- 浅层响应式
-const selectPage = shallowRef(DeviceStatus)
+const selectPage = shallowRef(Statistics)
 
 onMounted(() => {
     emitter.on('menu-select', (key) => {
@@ -37,4 +37,13 @@ onUnmounted(() => {
 })
 
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+</style>
