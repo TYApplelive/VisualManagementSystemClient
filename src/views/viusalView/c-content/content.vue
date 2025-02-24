@@ -8,11 +8,11 @@
 import DeviceStatus from './contentView/DeviceStatus.vue';
 import Statistics from './contentView/Statistics.vue';
 
-import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
+import { onMounted, onUnmounted, shallowRef } from 'vue'
 import emitter from '@/utils/emitter';
 
 // 页面选择- 浅层响应式
-const selectPage = shallowRef(Statistics)
+const selectPage = shallowRef(DeviceStatus)
 
 onMounted(() => {
     emitter.on('menu-select', (key) => {
