@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import DeviceStatus from './contentView/DeviceStatus.vue';
-import Statistics from './contentView/statistics.vue';
+import statistics from './contentView/Statistics.vue';
 
 import { onMounted, onUnmounted, ref, shallowRef } from 'vue'
 import emitter from '@/utils/emitter';
