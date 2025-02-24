@@ -121,13 +121,48 @@
             </el-row>
         </div>
 
-        <div class="chart_box">统计图在这里</div>
+        <div class="chart_box">
+            <div ref="chartBoxChild1" style="width: 600px; height: 400px;" class="chartBoxChild1"></div>
+        </div>
 
         <div class="table_box">统计表在这里</div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
+import * as echarts from 'echarts';
+
+const chartBoxChild1 = ref(null);
+let chartInstance: echarts.ECharts
+
+onMounted(() => {
+    chartInstance = echarts.init(chartBoxChild1.value);
+    const option = {
+        // 这里是ECharts的配置项，可以根据需要绘制不同类型的图表
+        title: {
+            text: '设备报警数'
+        },
+        tooltip: {},
+        xAxis: {
+            data: ["2024年10月", "2024年11月", "2024年12月", "2025年1月", "2025年2月"]
+        },
+        yAxis: {},
+        series: [{
+            name: '报警数',
+            type: 'line', // 这里可以是'line'、'bar'、'pie'等，根据图表类型选择
+            data: [120, 200, 150, 80, 70]
+        }]
+    };
+    chartInstance.setOption(option);
+});
+
+// 销毁ECharts实例
+onUnmounted(() => {
+    if (chartInstance != null && chartInstance.dispose) {
+        chartInstance.dispose();
+    }
+})
 
 </script>
 
@@ -139,6 +174,10 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: space-around;
+}
+
+.chart_box {
+    width: 100%;
 }
 
 .el-row {
