@@ -7,9 +7,11 @@
             </div>
             <div class="devTable">
                 <el-table :data="tableData" style="width: 100%;height: 100%;">
-                    <el-table-column prop="date" label="Date" width="180" />
-                    <el-table-column prop="name" label="Name" width="180" />
-                    <el-table-column prop="address" label="Address" />
+                    <el-table-column prop="date" label="安装日期" width="120px" />
+                    <el-table-column prop="name" label="设备名称" width="100px" />
+                    <el-table-column prop="id" label="设备ID" width="80px" />
+                    <el-table-column show-overflow-tooltip prop="address" label="设备地址" width="240px" />
+                    <el-table-column prop="status" label="设备状态" />
                 </el-table>
             </div>
         </div>
@@ -35,143 +37,52 @@ const input = ref('')
 const tableData = [
     {
         date: '2016-05-03',
-        name: 'Tom',
+        name: 'Device1',
+        id: '001',
         address: 'No. 189, Grove St, Los Angeles',
+        status: 'Active'
     },
     {
         date: '2016-05-02',
-        name: 'Tom',
+        name: 'Device2',
+        id: '002',
         address: 'No. 189, Grove St, Los Angeles',
+        status: 'Inactive'
     },
     {
         date: '2016-05-04',
-        name: 'Tom',
+        name: 'Device3',
+        id: '003',
         address: 'No. 189, Grove St, Los Angeles',
+        status: 'Active'
     },
     {
         date: '2016-05-01',
-        name: 'Tom',
+        name: 'Device4',
+        id: '004',
         address: 'No. 189, Grove St, Los Angeles',
+        status: 'Active'
     },
     {
         date: '2016-05-08',
-        name: 'Tom',
+        name: 'Device5',
+        id: '005',
         address: 'No. 189, Grove St, Los Angeles',
+        status: 'Inactive'
     },
     {
         date: '2016-05-06',
-        name: 'Tom',
+        name: 'Device6',
+        id: '006',
         address: 'No. 189, Grove St, Los Angeles',
+        status: 'Active'
     },
     {
         date: '2016-05-07',
-        name: 'Tom',
+        name: 'Device7',
+        id: '007',
         address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-08',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-06',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-07',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-08',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-06',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-07',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-01',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-08',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-06',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-07',
-        name: 'Tom',
-        address: 'No. 189, Grove St, Los Angeles',
+        status: 'Active'
     },
 ]
 

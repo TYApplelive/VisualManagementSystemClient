@@ -1,6 +1,6 @@
 <template>
     <div class="menu">
-        <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect">
+        <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect">
             <el-menu-item index="1">
                 <el-icon>
                     <location />
