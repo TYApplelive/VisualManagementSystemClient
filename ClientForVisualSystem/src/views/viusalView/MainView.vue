@@ -6,7 +6,6 @@
                     <menuComponent />
                 </el-aside>
                 <el-main>
-                    <!-- 动态组件 -->
                     <contentComponent />
                 </el-main>
             </el-container>
@@ -36,10 +35,13 @@ import contentComponent from './c-content/content.vue'
         .el-container {
             width: 100%;
             height: 100%;
+            display: flex;
 
             .el-aside {
                 height: 100%;
                 background: var(--el-color-primary-light-8);
+                min-width: 200px;
+                flex-shrink: 0;
             }
 
             .el-main {
@@ -47,6 +49,7 @@ import contentComponent from './c-content/content.vue'
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                flex-grow: 1;
             }
         }
     }
