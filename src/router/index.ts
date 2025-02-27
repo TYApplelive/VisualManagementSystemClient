@@ -28,11 +28,6 @@ const router = createRouter({
       component: () => import('@/views/viusalView/MainView.vue'),
     },
     {
-      path: '/test',
-      name: 'test',
-      component: () => import('@/views/TestView/TestView.vue'),
-    },
-    {
       //其他页面跳转到404
       path: '/:pathMatch(.*)*',
       name: '404',
