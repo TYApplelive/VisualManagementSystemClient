@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import visualView from '@/views/viusalView/visualView.vue'
+import RegisterView from '@/views/AuthView/RegisterView.vue'
+import LoginView from '@/views/AuthView/LoginView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -15,17 +19,23 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/AuthView/LoginView.vue'),
+      component: LoginView,
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('@/views/AuthView/RegisterView.vue'),
+      component: RegisterView,
     },
     {
       path: '/visual',
       name: 'visual',
-      component: () => import('@/views/viusalView/MainView.vue'),
+      component: visualView,
+      children: [
+        {
+          path: '/monitor',
+          component: () => import('@/views/viusalView/Pages/deviceMonitor/deviceMonitor.vue'),
+        },
+      ],
     },
     {
       //其他页面跳转到404
