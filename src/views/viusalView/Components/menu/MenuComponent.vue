@@ -13,7 +13,7 @@
         </el-icon>
         <template #title>设备监控</template>
       </el-menu-item>
-      <el-menu-item index="profile">
+      <el-menu-item index="personal">
         <el-icon>
           <User />
         </el-icon>
@@ -36,12 +36,14 @@ const activeMenu = ref('monitor')
 // 菜单折叠
 const iscollapse = ref(true)
 const MenuTitle = ref('设备监控')
+const MenuIndex = ref('monitor')
 const handleMenuSelect = (index: string) => {
+  MenuIndex.value = '/' + index // 赋值菜单选项
   switch (index) {
     case 'monitor':
       MenuTitle.value = '设备监控'
       break
-    case 'profile':
+    case 'personal':
       MenuTitle.value = '个人资料'
       break
     case 'network':
@@ -69,7 +71,7 @@ watch(
 )
 
 //暴露值给父组件
-defineExpose({ MenuTitle })
+defineExpose({ MenuTitle, MenuIndex })
 </script>
 
 <style lang="less" scoped>

@@ -47,7 +47,9 @@
           </div>
         </header>
         <main class="main">
-          <div class="main-cotent">内容显示区域</div>
+          <div class="main-cotent">
+            <router-view />
+          </div>
         </main>
       </el-container>
     </div>
@@ -55,16 +57,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import MenuComponent from './Components/menu/MenuComponent.vue'
 
 const isexpand = ref(false)
 const toggle_btn = ref<HTMLElement | null>(null)
 const menuRef = ref<InstanceType<typeof MenuComponent> | null>(null)
+const router = useRouter()
+
 const Toggle_Btn = (i: HTMLElement) => {
   i.classList.toggle('expand')
   isexpand.value = !isexpand.value
 }
+
+watch(
+  () => menuRef.value?.MenuIndex,
+  newValue => {
+    router.push(newValue ?? '/')
+  }
+)
+
+onMounted(() => {
+  // * 初始化=>监控页面
+  router.push(menuRef.value?.MenuIndex ?? 'monitor')
+})
 </script>
 <style lang="less" scoped>
 @import url(/iconfont/iconfont.css);

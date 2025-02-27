@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import visualView from '@/views/viusalView/visualView.vue'
-import RegisterView from '@/views/AuthView/RegisterView.vue'
-import LoginView from '@/views/AuthView/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,12 +17,12 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
+      component: () => import('@/views/AuthView/LoginView.vue'),
     },
     {
       path: '/register',
       name: 'register',
-      component: RegisterView,
+      component: () => import('@/views/AuthView/RegisterView.vue'),
     },
     {
       path: '/visual',
@@ -33,7 +31,15 @@ const router = createRouter({
       children: [
         {
           path: '/monitor',
-          component: () => import('@/views/viusalView/Pages/deviceMonitor/deviceMonitor.vue'),
+          component: () => import('@/views/viusalView/Pages/monitor/deviceMonitorPage.vue'),
+        },
+        {
+          path: '/personal',
+          component: () => import('@/views/viusalView/Pages/personal/personalPage.vue'),
+        },
+        {
+          path: '/network',
+          component: () => import('@/views/viusalView/Pages/network/networkPage.vue'),
         },
       ],
     },

@@ -91,7 +91,7 @@ const sendVerificationCode = () => {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .register-wrapper {
   min-height: 93.5vh;
   display: flex;

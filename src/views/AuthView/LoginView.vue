@@ -114,7 +114,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .login-wrapper {
   min-height: 93.5vh;
   display: flex;
