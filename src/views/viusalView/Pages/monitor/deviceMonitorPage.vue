@@ -38,7 +38,10 @@
           <el-icon style="color: rgb(102.2, 177.4, 255); margin-right: 3px"><InfoFilled /></el-icon
           >共0条记录
         </div>
-        <a class="button addDeviceBtn">添加设备</a>
+        <div class="operation">
+          <a class="button addDeviceBtn">添加设备</a>
+          <a class="button removeDeviceBtn">删除设备</a>
+        </div>
       </div>
       <div class="main">
         <el-table
@@ -149,9 +152,10 @@ const tableData = [
 @base-font-color: #ffffff;
 @base-font-size: 14px;
 @base-background-color: #071927;
-@button-color: #00aeec;
-@button-hover-color: #40c5f1;
-
+@button-color: rgb(64, 141, 224);
+@button-hover-color: rgb(50.8, 116.6, 184.5);
+@button-color-danger: rgb(247, 137.4, 137.4);
+@button-hover-color-danger: rgb(177.5, 81.6, 81.6);
 .button {
   @height: 30px;
   width: 100px;
@@ -176,6 +180,7 @@ const tableData = [
   }
 }
 
+// 上部分搜索框
 .deviceMonitor {
   width: 100%;
   margin: 10px;
@@ -234,6 +239,7 @@ const tableData = [
   }
 }
 
+// 下部分信息展示框
 .deviceMonitor {
   .info_dispaly {
     width: 100%;
@@ -267,6 +273,24 @@ const tableData = [
         border-radius: 5px;
         border: 1px solid #00aeec;
         background-color: rgb(201, 230, 241);
+      }
+      .operation {
+        display: flex;
+        .addDeviceBtn {
+          margin-right: 20px;
+        }
+        .removeDeviceBtn {
+          background-color: @button-color-danger;
+          &:hover {
+            background-color: @button-hover-color-danger;
+          }
+        }
+      }
+      .addDeviceBtn.disable {
+        cursor: no-drop;
+        &:hover {
+          background-color: @button-color;
+        }
       }
     }
     .main {
