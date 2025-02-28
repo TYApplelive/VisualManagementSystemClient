@@ -292,6 +292,12 @@ const tableData = [
           background-color: @button-color;
         }
       }
+      .addDeviceBtn.disable {
+        cursor: no-drop;
+        &:hover {
+          background-color: @button-color;
+        }
+      }
     }
     .main {
       height: 100%;
