@@ -268,6 +268,12 @@ const tableData = [
         border: 1px solid #00aeec;
         background-color: rgb(201, 230, 241);
       }
+      .addDeviceBtn.disable {
+        cursor: no-drop;
+        &:hover {
+          background-color: @button-color;
+        }
+      }
     }
     .main {
       height: 100%;
