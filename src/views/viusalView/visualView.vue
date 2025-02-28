@@ -6,7 +6,7 @@
           <!-- logo -->
           <img class="icon" src="/icon.png" alt="" />
           <!-- logo Descrpition -->
-          <p class="description">数据后台</p>
+          <p class="description">仪表盘</p>
         </div>
         <div class="select-menu">
           <MenuComponent :isexpand="isexpand" ref="menuRef" />
@@ -47,9 +47,7 @@
           </div>
         </header>
         <main class="main">
-          <div class="main-cotent">
-            <router-view />
-          </div>
+          <router-view />
         </main>
       </el-container>
     </div>
@@ -264,10 +262,13 @@ onMounted(() => {
 }
 
 .main {
-  width: auto;
-  height: 100%;
+  width: 100%;
+  display: flex;
+  overflow-y: hidden;
   background-color: #ffffff;
   border-radius: 10px;
   margin: 0 8px 8px 0px;
+  justify-content: start;
+  flex: 1;
 }
 </style>

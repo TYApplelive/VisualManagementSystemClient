@@ -96,6 +96,7 @@ defineExpose({ MenuTitle, MenuIndex })
   flex-direction: column;
   justify-content: start;
   align-items: center;
+  flex-wrap: nowrap;
 
   &.expand {
     width: 200px;
