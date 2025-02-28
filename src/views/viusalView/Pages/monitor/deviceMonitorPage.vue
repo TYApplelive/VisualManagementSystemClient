@@ -40,7 +40,32 @@
         </div>
         <a class="button addDeviceBtn">添加设备</a>
       </div>
-      <div class="main">内容位置</div>
+      <div class="main">
+        <el-table
+          class="device-table"
+          :data="tableData"
+          stripe
+          style="width: 100%"
+          max-height="520"
+          table-layout="fixed"
+        >
+          <el-table-column prop="date" label="Date" width="180" />
+          <el-table-column prop="name" label="Name" width="180" />
+          <el-table-column prop="address" label="Address" />
+          <el-table-column fixed="right" label="Operations" min-width="120">
+            <template #default>
+              <el-button link type="primary" size="small">详细</el-button>
+              <el-button link type="primary" size="small">修改</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          class="switch-pagination"
+          layout="prev, pager, next "
+          :page-size="10"
+          :total="200"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -51,6 +76,74 @@ const searchForm = reactive({
   name: '',
   address: '',
 })
+
+const tableData = [
+  {
+    date: '2016-05-03',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-02',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-04',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-01',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-08',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-06',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-07',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-07',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-07',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-07',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-07',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-07',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+  {
+    date: '2016-05-07',
+    name: 'Tom',
+    address: 'No. 189, Grove St, Los Angeles',
+  },
+]
 </script>
 <style lang="less" scoped>
 @base-font-color: #ffffff;
@@ -98,9 +191,7 @@ const searchForm = reactive({
     margin-bottom: 20px;
     margin-top: 20px;
     border-radius: 5px;
-    box-shadow:
-      rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-      rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 
     .form-inline {
       height: 100%;
@@ -154,7 +245,6 @@ const searchForm = reactive({
       rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
     display: flex;
     flex-direction: column;
-    // flex: 1;
 
     .header {
       height: 80px;
@@ -164,6 +254,8 @@ const searchForm = reactive({
       align-items: center;
       padding: 0 20px 10px 20px;
       margin: 20px 10px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
       box-shadow:
         rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
         rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
@@ -179,12 +271,21 @@ const searchForm = reactive({
     }
     .main {
       height: 100%;
-      // min-height: 500px;
+      border-radius: 5px;
       padding: 0 20px 10px 20px;
-      margin: 10px 10px;
-      box-shadow:
-        rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+      margin: 0px 10px 10px 10px;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      .device-table {
+        user-select: text;
+        flex: 1;
+      }
+      .switch-pagination {
+        margin-top: 20px;
+      }
     }
   }
 }

@@ -23,7 +23,7 @@
         <el-icon>
           <i class="iconfont icon-wifi" style="font-size: 22px; color: white"></i>
         </el-icon>
-        <template #title>设置</template>
+        <template #title>网络检测</template>
       </el-menu-item>
     </el-menu>
   </div>
