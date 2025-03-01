@@ -52,9 +52,13 @@
           max-height="520"
           table-layout="fixed"
         >
-          <el-table-column prop="date" label="Date" width="180" />
-          <el-table-column prop="name" label="Name" width="180" />
-          <el-table-column prop="address" label="Address" />
+          <el-table-column prop="id" label="编号" show-overflow-tooltip />
+          <el-table-column prop="status" label="状态" />
+          <el-table-column prop="address" label="地址" />
+          <el-table-column prop="cpu_usage" label="CPU占用" />
+          <el-table-column prop="memory_usage" label="内存占用" />
+          <el-table-column prop="disk_usage" label="硬盘占用" />
+          <el-table-column prop="last_updated" label="上次更新" />
           <el-table-column fixed="right" label="Operations" min-width="120">
             <template #default>
               <el-button link type="primary" size="small">详细</el-button>
@@ -65,8 +69,8 @@
         <el-pagination
           class="switch-pagination"
           layout="prev, pager, next "
-          :page-size="10"
-          :total="200"
+          :page-size="page_size"
+          :total="pagination_total"
         />
       </div>
     </div>
@@ -74,79 +78,14 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+const page_size = 12 // 固定值，一页十二个数据
+const pagination_total = ref(200)
 const searchForm = reactive({
   name: '',
   address: '',
 })
-
-const tableData = [
-  {
-    date: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-02',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-04',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-01',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-08',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-06',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-07',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-07',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-07',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-07',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-07',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-07',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-  {
-    date: '2016-05-07',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-  },
-]
+const tableData = reactive([])
 </script>
 <style lang="less" scoped>
 @base-font-color: #ffffff;
