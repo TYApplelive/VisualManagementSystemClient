@@ -20,7 +20,7 @@
             <el-icon><Search /></el-icon>
             <p>搜索</p>
           </a>
-          <a class="resetBtn button">
+          <a class="resetBtn button" @click="reset">
             <el-icon><RefreshLeft /></el-icon>
             <p>重置</p>
           </a>
@@ -76,6 +76,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { isEqual } from 'lodash'
 import request from '@/request'
 
 // * 与后端的API返回数据对应
@@ -135,8 +136,15 @@ const page_switch = async (current_page: number, id?: string, address?: string) 
 
 const search = async () => {
   current_page.value = 1 // 当前页数恢复
-  page_switch(current_page.value, searchForm.id, searchForm.address)
-  Object.assign(search_buffer, searchForm)
+  // 如果比较缓冲区和刚获取的搜索条件不同，则触发一次数据库查询
+  if (!isEqual(searchForm, search_buffer)) {
+    Object.assign(search_buffer, searchForm) // 搜索存入缓存区
+    page_switch(current_page.value, searchForm.id, searchForm.address)
+  }
+}
+
+const reset = async () => {
+  Object.assign(searchForm, { id: '', address: '' })
 }
 
 //初始化
@@ -165,12 +173,12 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.2s ease-in-out;
 
   &:hover {
     background-color: @button-hover-color;
+    scale: 0.95;
   }
-
   .el-icon {
     margin-right: 2px;
   }
