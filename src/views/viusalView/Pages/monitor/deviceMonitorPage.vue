@@ -3,13 +3,8 @@
     <div class="search_nav">
       <el-form :inline="true" class="form-inline" :model="searchForm">
         <el-form-item class="search_nav_item">
-          <p class="input-title">设备名称</p>
-          <el-input
-            class="name"
-            placeholder="请输入设备名称或编号"
-            v-model="searchForm.name"
-            clearable
-          />
+          <p class="input-title">设备编号</p>
+          <el-input class="name" placeholder="请输入设备编号" v-model="searchForm.id" clearable />
         </el-form-item>
         <el-form-item class="search_nav_item">
           <p class="input-title">设备地址</p>
@@ -21,10 +16,10 @@
           />
         </el-form-item>
         <el-form-item>
-          <a class="searchBtn button"
-            ><el-icon><Search /></el-icon>
-            <p>搜索</p></a
-          >
+          <a class="searchBtn button" @click="search">
+            <el-icon><Search /></el-icon>
+            <p>搜索</p>
+          </a>
           <a class="resetBtn button">
             <el-icon><RefreshLeft /></el-icon>
             <p>重置</p>
@@ -36,7 +31,7 @@
       <div class="header">
         <div class="tips">
           <el-icon style="color: rgb(102.2, 177.4, 255); margin-right: 3px"><InfoFilled /></el-icon
-          >共0条记录
+          >共{{ pagination_total }}条记录
         </div>
         <div class="operation">
           <a class="button addDeviceBtn">添加设备</a>
@@ -52,7 +47,7 @@
           max-height="520"
           table-layout="fixed"
         >
-          <el-table-column prop="id" label="编号" show-overflow-tooltip />
+          <el-table-column prop="id" label="编号" width="350" show-overflow-tooltip />
           <el-table-column prop="status" label="状态" />
           <el-table-column prop="address" label="地址" />
           <el-table-column prop="cpu_usage" label="CPU占用" />
@@ -71,6 +66,8 @@
           layout="prev, pager, next "
           :page-size="page_size"
           :total="pagination_total"
+          v-model:current-page="current_page"
+          @current-change="page_switch(current_page, search_buffer.id, search_buffer.address)"
         />
       </div>
     </div>
@@ -78,14 +75,74 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import request from '@/request'
+
+// * 与后端的API返回数据对应
+interface databaseReturn {
+  data: Array<never>
+  message: string
+  result: boolean
+  matchnum: number
+}
+
+// * 数据源请求参数
+interface ParamsType {
+  limit: number
+  skip: number
+  id?: string
+  address?: string
+}
+
+const current_page = ref(1)
+const page_index = ref(1)
 const page_size = 12 // 固定值，一页十二个数据
-const pagination_total = ref(200)
+const pagination_total = ref(0)
 const searchForm = reactive({
-  name: '',
+  id: '',
   address: '',
 })
-const tableData = reactive([])
+const tableData = ref([])
+
+// 搜索缓存区
+const search_buffer = reactive({
+  id: '',
+  address: '',
+})
+
+// * 分页切换函数
+const page_switch = async (current_page: number, id?: string, address?: string) => {
+  tableData.value = [] // 初始化表格缓冲区
+  page_index.value = current_page - 1 // 页码更改
+
+  const params = reactive<ParamsType>({
+    limit: page_size,
+    skip: page_index.value * page_size,
+  })
+
+  if (id) params.id = id.trim()
+  if (address) params.address = address.trim()
+
+  const response = await request.get<databaseReturn>('/monitor/db/find', { params })
+  const result = response.data.data
+  console.log(result)
+
+  if (result.result) {
+    pagination_total.value = result.matchnum
+    tableData.value.push(...result.data)
+  }
+}
+
+const search = async () => {
+  current_page.value = 1 // 当前页数恢复
+  page_switch(current_page.value, searchForm.id, searchForm.address)
+  Object.assign(search_buffer, searchForm)
+}
+
+//初始化
+onMounted(async () => {
+  await page_switch(current_page.value)
+})
 </script>
 <style lang="less" scoped>
 @base-font-color: #ffffff;
