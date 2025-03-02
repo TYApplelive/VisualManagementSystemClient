@@ -34,6 +34,10 @@
           >共{{ pagination_total }}条记录
         </div>
         <div class="operation">
+          <a class="button refreshBtn" @click="refresh">
+            <el-icon><Refresh /></el-icon>
+            刷新
+          </a>
           <a class="button addDeviceBtn">添加设备</a>
           <a class="button removeDeviceBtn">删除设备</a>
         </div>
@@ -96,7 +100,6 @@ interface ParamsType {
 }
 
 const current_page = ref(1)
-const page_index = ref(1)
 const page_size = 12 // 固定值，一页十二个数据
 const pagination_total = ref(0)
 const searchForm = reactive({
@@ -114,11 +117,11 @@ const search_buffer = reactive({
 // * 分页切换函数
 const page_switch = async (current_page: number, id?: string, address?: string) => {
   tableData.value = [] // 初始化表格缓冲区
-  page_index.value = current_page - 1 // 页码更改
+  const page_index = current_page - 1 // 页码更改
 
   const params = reactive<ParamsType>({
     limit: page_size,
-    skip: page_index.value * page_size,
+    skip: page_index * page_size,
   })
 
   if (id) params.id = id.trim()
@@ -134,6 +137,16 @@ const page_switch = async (current_page: number, id?: string, address?: string) 
   }
 }
 
+// * 页面刷新函数
+const page_refresh = async () => {
+  // 如果当前页码超过了最大页面，则取最大页码为当前页码
+  if (current_page.value > Math.ceil(pagination_total.value / page_size))
+    current_page.value = Math.ceil(pagination_total.value / page_size)
+
+  // 页面切换函数
+  page_switch(current_page.value, search_buffer.id, search_buffer.address)
+}
+
 const search = async () => {
   current_page.value = 1 // 当前页数恢复
   // 如果比较缓冲区和刚获取的搜索条件不同，则触发一次数据库查询
@@ -145,6 +158,14 @@ const search = async () => {
 
 const reset = async () => {
   Object.assign(searchForm, { id: '', address: '' })
+  if (!isEqual(searchForm, search_buffer)) {
+    Object.assign(search_buffer, searchForm) // 搜索存入缓存区
+    page_switch(current_page.value, searchForm.id, searchForm.address)
+  }
+}
+
+const refresh = async () => {
+  page_refresh()
 }
 
 //初始化
@@ -280,7 +301,8 @@ onMounted(async () => {
       }
       .operation {
         display: flex;
-        .addDeviceBtn {
+        .addDeviceBtn,
+        .refreshBtn {
           margin-right: 20px;
         }
         .removeDeviceBtn {
