@@ -17,11 +17,15 @@
         </el-form-item>
         <el-form-item>
           <a class="searchBtn button" @click="search">
-            <el-icon><Search /></el-icon>
+            <el-icon>
+              <Search />
+            </el-icon>
             <p>搜索</p>
           </a>
           <a class="resetBtn button" @click="reset">
-            <el-icon><RefreshLeft /></el-icon>
+            <el-icon>
+              <RefreshLeft />
+            </el-icon>
             <p>重置</p>
           </a>
         </el-form-item>
@@ -30,16 +34,19 @@
     <div class="info_dispaly">
       <div class="header">
         <div class="tips">
-          <el-icon style="color: rgb(102.2, 177.4, 255); margin-right: 3px"><InfoFilled /></el-icon
+          <el-icon style="color: rgb(102.2, 177.4, 255); margin-right: 3px">
+            <InfoFilled /> </el-icon
           >共{{ pagination_total }}条记录
         </div>
         <div class="operation">
           <a class="button refreshBtn" @click="refresh">
-            <el-icon><Refresh /></el-icon>
+            <el-icon>
+              <Refresh />
+            </el-icon>
             刷新
           </a>
-          <a class="button addDeviceBtn">添加设备</a>
-          <a class="button removeDeviceBtn">删除设备</a>
+          <a class="button addDeviceBtn" @click="addDeviceDialogVisible = true">添加设备</a>
+          <a class="button removeDeviceBtn" @click="removeDeviceDialogVisible = true">删除设备</a>
         </div>
       </div>
       <div class="main">
@@ -52,12 +59,11 @@
           table-layout="fixed"
         >
           <el-table-column prop="id" label="编号" width="350" show-overflow-tooltip />
+          <el-table-column prop="name" label="名称" />
+          <el-table-column prop="ip" label="IP" />
           <el-table-column prop="status" label="状态" />
           <el-table-column prop="address" label="地址" />
-          <el-table-column prop="cpu_usage" label="CPU占用" />
-          <el-table-column prop="memory_usage" label="内存占用" />
-          <el-table-column prop="disk_usage" label="硬盘占用" />
-          <el-table-column prop="last_updated" label="上次更新" />
+          <el-table-column prop="create_time" label="创建时间" />
           <el-table-column fixed="right" label="Operations" min-width="120">
             <template #default>
               <el-button link type="primary" size="small">详细</el-button>
@@ -76,12 +82,55 @@
       </div>
     </div>
   </div>
+
+  <!-- 添加设备对话框 -->
+  <el-dialog
+    v-model="addDeviceDialogVisible"
+    title="添加设备"
+    width="600px"
+    :before-close="handleClose"
+  >
+    <addDevice ref="addDeviceRef" />
+    <el-dialog v-model="confirmVisible" title="提示" width="400px">
+      <span>确定要取消添加设备吗?</span>
+      <template #footer>
+        <el-button @click="confirmVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          @click="
+            () => {
+              addDeviceDialogVisible = false
+              confirmVisible = false
+            }
+          "
+        >
+          确定
+        </el-button>
+      </template>
+    </el-dialog>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="confirmVisible = true">取消</el-button>
+        <el-button
+          type="primary"
+          @click="
+            () => {
+              addDeviceDialogVisible = false
+              add()
+            }
+          "
+          >添加
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
 import request from '@/request'
+import addDevice from './components/addDevice.vue'
 
 // * 与后端的API返回数据对应
 interface databaseReturn {
@@ -99,6 +148,15 @@ interface ParamsType {
   address?: string
 }
 
+// * 设备数据类型
+interface DeviceType {
+  name: string
+  id: string
+  status: string
+  ip: string
+  address: string
+}
+
 const current_page = ref(1)
 const page_size = 12 // 固定值，一页十二个数据
 const pagination_total = ref(0)
@@ -107,6 +165,13 @@ const searchForm = reactive({
   address: '',
 })
 const tableData = ref([])
+
+// * 增加和删除设备对话框标志位
+const addDeviceDialogVisible = ref(false)
+const removeDeviceDialogVisible = ref(false)
+const confirmVisible = ref(false)
+
+const addDeviceRef = ref<InstanceType<typeof addDevice> | null>(null)
 
 // 搜索缓存区
 const search_buffer = reactive({
@@ -168,6 +233,23 @@ const refresh = async () => {
   page_refresh()
 }
 
+const add = async () => {
+  console.log('addDevice', addDeviceRef.value?.form)
+  // TODO 完成后端增加设备API逻辑
+  if (addDeviceRef.value?.form) {
+    const datas: DeviceType = { ...addDeviceRef.value.form }
+    const response = await request.post<databaseReturn, DeviceType>('/monitor/addDevice', datas)
+    const result = response.data
+    console.log(result)
+  }
+}
+
+// * 设备操作对话框关闭提示
+const handleClose = (done: () => void) => {
+  ElMessageBox.confirm('是否关闭当前操作,关闭后未保存操作都将销毁', '提示').then(() => {
+    done()
+  })
+}
 //初始化
 onMounted(async () => {
   await page_switch(current_page.value)
@@ -181,6 +263,7 @@ onMounted(async () => {
 @button-hover-color: rgb(50.8, 116.6, 184.5);
 @button-color-danger: rgb(247, 137.4, 137.4);
 @button-hover-color-danger: rgb(177.5, 81.6, 81.6);
+
 .button {
   @height: 30px;
   width: 100px;
@@ -200,6 +283,7 @@ onMounted(async () => {
     background-color: @button-hover-color;
     scale: 0.95;
   }
+
   .el-icon {
     margin-right: 2px;
   }
@@ -229,14 +313,17 @@ onMounted(async () => {
       flex-direction: row;
       align-items: center;
       margin-left: 20px;
+
       .el-form-item {
         margin-bottom: 0px;
       }
+
       .search_nav_item {
         :deep(.el-form-item__content) {
           .input-title {
             width: 80px;
           }
+
           width: 300px;
           display: flex;
           flex-wrap: nowrap;
@@ -248,6 +335,7 @@ onMounted(async () => {
 
     .searchBtn {
       margin-right: 10px;
+
       &:hover {
         background-color: @button-hover-color;
       }
@@ -257,6 +345,7 @@ onMounted(async () => {
       background-color: #ffffff;
       color: #071927;
       border: 1px solid #2a2e31a6;
+
       &:hover {
         background-color: #e7e2e2;
       }
@@ -290,6 +379,7 @@ onMounted(async () => {
       box-shadow:
         rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
         rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
       .tips {
         display: flex;
         flex-direction: row;
@@ -299,32 +389,41 @@ onMounted(async () => {
         border: 1px solid #00aeec;
         background-color: rgb(201, 230, 241);
       }
+
       .operation {
         display: flex;
+
         .addDeviceBtn,
         .refreshBtn {
           margin-right: 20px;
         }
+
         .removeDeviceBtn {
           background-color: @button-color-danger;
+
           &:hover {
             background-color: @button-hover-color-danger;
           }
         }
       }
+
       .addDeviceBtn.disable {
         cursor: no-drop;
+
         &:hover {
           background-color: @button-color;
         }
       }
+
       .addDeviceBtn.disable {
         cursor: no-drop;
+
         &:hover {
           background-color: @button-color;
         }
       }
     }
+
     .main {
       height: 100%;
       border-radius: 5px;
@@ -335,10 +434,12 @@ onMounted(async () => {
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
+
       .device-table {
         user-select: text;
         flex: 1;
       }
+
       .switch-pagination {
         margin-top: 20px;
       }
