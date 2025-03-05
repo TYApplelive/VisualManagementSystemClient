@@ -1,44 +1,51 @@
 <template>
   <div class="addDevice">
-    <el-form :model="form" label-width="auto">
-      <el-form-item label="设备名称">
+    <el-form :model="form" :rules="rules" ref="formRef" label-width="auto">
+      <el-form-item label="设备名称" prop="name">
         <el-input v-model="form.name" placeholder="默认为设备ID" />
       </el-form-item>
       <el-form-item label="设备ID">
         <el-input v-model="form.id" placeholder="请输入设备uuid/唯一编号" />
       </el-form-item>
-      <el-form-item label="设备状态">
+      <el-form-item label="设备状态" prop="status">
         <el-select v-model="form.status" placeholder="请选择设备的状态" clearable>
           <el-option
-            v-for="item in optins"
+            v-for="item in options"
             :key="item.value"
             :label="item.label"
             :value="item.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="设备IP">
+      <el-form-item label="设备IP" prop="ip">
         <el-input v-model="form.ip" placeholder="xxx.xxx.xxx.xxx" />
       </el-form-item>
-      <el-form-item label="设备地址">
+      <el-form-item label="设备地址" prop="address">
         <el-input v-model="form.address" placeholder="xxx街道xx号" />
+      </el-form-item>
+      <el-form-item label="设备出厂码" required>
+        <el-input v-model="form.EFC" placeholder="" disabled />
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import type { FormInstance } from 'element-plus'
 
+// 表单
 const form = reactive({
   name: '',
   id: '',
   status: 'disconnect',
   ip: '',
   address: '',
+  EFC: '',
 })
 
-const optins = [
+// 选项
+const options = [
   {
     value: 'shutdown',
     label: '关机',
@@ -57,8 +64,51 @@ const optins = [
   },
 ]
 
+// 表单规则
+const rules = {
+  name: [
+    { required: false, message: '请输入设备名称', trigger: 'blur' },
+    {
+      pattern: /^[a-zA-Z0-9\u4e00-\u9fa5_-]*$/, // 允许字母、数字、中文、下划线和连字符
+      message: '设备名称不能包含特殊字符',
+      trigger: 'blur',
+    },
+  ],
+  status: [{ required: true, message: '请选择设备状态', trigger: 'change' }],
+  ip: [
+    { required: true, message: '请输入设备IP', trigger: 'blur' },
+    {
+      pattern:
+        /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+      message: '请输入有效的IP地址',
+      trigger: 'blur',
+    },
+  ],
+  address: [{ required: true, message: '请输入设备地址', trigger: 'blur' }],
+  EFC: [
+    { required: true, message: '请输入设备出厂码', trigger: 'blur' },
+    { min: 10, max: 20, message: '设备出厂码长度应在10到20个字符之间', trigger: 'blur' },
+  ],
+}
+
+const formRef = ref<FormInstance>()
+
+const validate = async () => {
+  const result = await formRef.value?.validate(valid => {
+    if (!valid) {
+      ElMessageBox.alert(`添加设备失败`, '提示', {
+        type: 'error',
+      })
+    }
+  })
+
+  return result
+}
+
 defineExpose({
   form,
+  validate,
+  formRef,
 })
 </script>
 <style lang="less" scoped>
