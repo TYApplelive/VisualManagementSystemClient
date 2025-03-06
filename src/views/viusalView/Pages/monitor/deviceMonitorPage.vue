@@ -39,6 +39,7 @@
           >共{{ pagination_total }}条记录
         </div>
         <div class="operation">
+          <!-- 工作区按钮 -->
           <a class="button refreshBtn" @click="refresh">
             <el-icon>
               <Refresh />
@@ -46,18 +47,22 @@
             刷新
           </a>
           <a class="button addDeviceBtn" @click="addDeviceDialogVisible = true">添加设备</a>
-          <a class="button removeDeviceBtn" @click="removeDeviceDialogVisible = true">删除设备</a>
+          <a class="button removeDeviceBtn" @click="removeDevice">删除设备</a>
         </div>
       </div>
       <div class="main">
+        <!-- 表格DOM -->
         <el-table
+          ref="multipleTableRef"
           class="device-table"
           :data="tableData"
           stripe
           style="width: 100%"
           max-height="520"
           table-layout="fixed"
+          @selection-change="handleSelectionChange"
         >
+          <el-table-column type="selection" width="55" />
           <el-table-column prop="id" label="编号" width="350" show-overflow-tooltip />
           <el-table-column prop="name" label="名称" />
           <el-table-column prop="ip" label="IP" />
@@ -115,7 +120,6 @@
           type="primary"
           @click="
             () => {
-              addDeviceDialogVisible = false
               add()
             }
           "
@@ -128,6 +132,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import type { TableInstance } from 'element-plus'
 import { isEqual } from 'lodash'
 import request from '@/request'
 import addDevice from './components/addDevice.vue'
@@ -155,6 +160,8 @@ interface DeviceType {
   status: string
   ip: string
   address: string
+  create_time?: string
+  EFC?: string
 }
 
 const current_page = ref(1)
@@ -164,11 +171,10 @@ const searchForm = reactive({
   id: '',
   address: '',
 })
-const tableData = ref([])
+const tableData = ref<DeviceType[]>([])
 
-// * 增加和删除设备对话框标志位
+// * 增加设备对话框标志位
 const addDeviceDialogVisible = ref(false)
-const removeDeviceDialogVisible = ref(false)
 const confirmVisible = ref(false)
 
 const addDeviceRef = ref<InstanceType<typeof addDevice> | null>(null)
@@ -178,6 +184,11 @@ const search_buffer = reactive({
   id: '',
   address: '',
 })
+
+// 选中待删除数组
+const selectToremoveArray = ref<DeviceType[]>()
+// 表格
+const multipleTableRef = ref<TableInstance>()
 
 // * 分页切换函数
 const page_switch = async (current_page: number, id?: string, address?: string) => {
@@ -194,8 +205,9 @@ const page_switch = async (current_page: number, id?: string, address?: string) 
 
   const response = await request.get<databaseReturn>('/monitor/db/find', { params })
   const result = response.data.data
-  console.log(result)
+  //console.log(result)
 
+  // 拿到数据库数据
   if (result.result) {
     pagination_total.value = result.matchnum
     tableData.value.push(...result.data)
@@ -234,13 +246,22 @@ const refresh = async () => {
 }
 
 const add = async () => {
-  console.log('addDevice', addDeviceRef.value?.form)
-  // TODO 完成后端增加设备API逻辑
+  // 获取设备表单数据
   if (addDeviceRef.value?.form) {
+    const FormResult = await addDeviceRef.value.validate()
+    if (!FormResult) return //返回空结果，阻塞代码
     const datas: DeviceType = { ...addDeviceRef.value.form }
     const response = await request.post<databaseReturn, DeviceType>('/monitor/addDevice', datas)
     const result = response.data
-    console.log(result)
+    // 添加设备成功关闭窗口
+    if (result.result) {
+      addDeviceDialogVisible.value = false
+      refresh()
+    } else {
+      ElMessageBox.alert(`添加设备失败,${result}`, '提示', {
+        type: 'error',
+      })
+    }
   }
 }
 
@@ -250,10 +271,60 @@ const handleClose = (done: () => void) => {
     done()
   })
 }
+
+// 删除设备逻辑函数
+const removeDevice = async () => {
+  if (selectToremoveArray.value?.length) {
+    ElMessageBox.confirm(`是否删除选中的设备?`, '提示').then(async () => {
+      // 选择确定删除
+      const RemoveArray = selectToremoveArray.value?.map(item => item.id)
+      const response = await request.post<databaseReturn, string[]>(
+        '/monitor/removeDevices',
+        RemoveArray
+      )
+      const result = response.data
+      if (result.result) {
+        // 删除结束刷新页面
+        page_refresh()
+      } else {
+        ElMessageBox.alert(`删除设备失败,${result}`, '提示', {
+          type: 'error',
+        })
+      }
+    })
+  } else {
+    ElMessageBox.alert(`请选择要删除的设备`, '提示', {
+      type: 'error',
+    })
+  }
+}
+
+const handleSelectionChange = (val: DeviceType[]) => {
+  // 同步到删除数组中
+  selectToremoveArray.value = val
+}
+
 //初始化
 onMounted(async () => {
   await page_switch(current_page.value)
 })
+
+// @Test-测试用function
+/*
+const _test_ = async () => {
+  for await (const i of range(10, 100)) {
+    const datas: DeviceType = {
+      name: `数据测试设备${i}`,
+      id: '',
+      status: 'disconnect',
+      ip: `127.0.0.${i}`,
+      address: `成都工业学院`,
+    }
+    const se = await request.post<databaseReturn, DeviceType>('/monitor/addDevice', datas)
+    console.log(se)
+  }
+}
+*/
 </script>
 <style lang="less" scoped>
 @base-font-color: #ffffff;
