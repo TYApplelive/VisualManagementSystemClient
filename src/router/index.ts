@@ -17,12 +17,12 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/AuthView/LoginView.vue'),
+      component: () => import('@/views/AuthView/loginView.vue'),
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('@/views/AuthView/RegisterView.vue'),
+      component: () => import('@/views/AuthView/registerView.vue'),
     },
     {
       path: '/visual',
@@ -31,14 +31,22 @@ const router = createRouter({
       children: [
         {
           path: '/monitor',
+          name: 'monitor',
           component: () => import('@/views/viusalView/Pages/monitor/deviceMonitorPage.vue'),
         },
         {
+          path: '/monitor/:id',
+          name: 'monitorDetail',
+          component: () => import('@/views/viusalView/Pages/monitor/sub/deviceDetail.vue'),
+        },
+        {
           path: '/personal',
+          name: 'personal',
           component: () => import('@/views/viusalView/Pages/personal/personalPage.vue'),
         },
         {
           path: '/network',
+          name: 'network',
           component: () => import('@/views/viusalView/Pages/network/networkPage.vue'),
         },
       ],

@@ -393,6 +393,7 @@ const handleDetail = (index: number, row: DeviceType) => {
 
 // 表内列工作列--- 修改
 const row = ref<DeviceType>()
+// 向子组件提供数据
 provide('updateDialogRow', row)
 const handleUpdate = (index: number, row_: DeviceType) => {
   // 发送数据到子组件updateDevice

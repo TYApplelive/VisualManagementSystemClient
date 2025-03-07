@@ -31,8 +31,12 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+// 默认monitor子组件
 const activeMenu = ref('monitor')
+
 // 菜单折叠
 const iscollapse = ref(true)
 const MenuTitle = ref('设备监控')
@@ -49,19 +53,25 @@ const handleMenuSelect = (index: string) => {
     case 'network':
       MenuTitle.value = '网络检测'
       break
-    default:
-      ElMessageBox.alert('暂未开放', '提示', {
-        confirmButtonText: '确定',
-      })
-      break
   }
 }
+
+watch(
+  () => router.currentRoute.value.path,
+  newValue => {
+    newValue = newValue.replace('/', '')
+    handleMenuSelect(newValue)
+    activeMenu.value = newValue
+  },
+  { immediate: true }
+)
 
 // 接收父组件传递的值
 const props = defineProps({
   isexpand: Boolean,
 })
 
+// 监听是否展开
 watch(
   () => props.isexpand,
   newValue => {

@@ -58,27 +58,28 @@
 import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import MenuComponent from './Components/menu/MenuComponent.vue'
+const router = useRouter()
 
 const isexpand = ref(false)
 const toggle_btn = ref<HTMLElement | null>(null)
 const menuRef = ref<InstanceType<typeof MenuComponent> | null>(null)
-const router = useRouter()
 
+// 菜单展开切换
 const Toggle_Btn = (i: HTMLElement) => {
   i.classList.toggle('expand')
   isexpand.value = !isexpand.value
 }
 
+// 检测菜单选项变化
 watch(
   () => menuRef.value?.MenuIndex,
   newValue => {
-    router.push(newValue ?? '/')
+    if (newValue) router.push(newValue)
   }
 )
 
 onMounted(() => {
-  // * 初始化=>监控页面
-  router.push(menuRef.value?.MenuIndex ?? 'monitor')
+  // * 初始化visual=>监控页面
 })
 </script>
 <style lang="less" scoped>
