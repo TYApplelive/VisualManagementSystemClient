@@ -59,9 +59,16 @@ const handleMenuSelect = (index: string) => {
 watch(
   () => router.currentRoute.value.path,
   newValue => {
-    newValue = newValue.replace('/', '')
-    handleMenuSelect(newValue)
-    activeMenu.value = newValue
+    if (newValue.startsWith('/monitor/')) {
+      activeMenu.value = 'monitor'
+      newValue = newValue.replace('/', '')
+      handleMenuSelect(newValue)
+      MenuTitle.value = '设备监控' // 保持设备监控不变
+    } else {
+      newValue = newValue.replace('/', '')
+      handleMenuSelect(newValue)
+      activeMenu.value = newValue
+    }
   },
   { immediate: true }
 )
