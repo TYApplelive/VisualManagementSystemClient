@@ -70,9 +70,21 @@
           <el-table-column prop="address" label="地址" />
           <el-table-column prop="create_time" label="创建时间" />
           <el-table-column fixed="right" label="Operations" min-width="120">
-            <template #default>
-              <el-button link type="primary" size="small">详细</el-button>
-              <el-button link type="primary" size="small">修改</el-button>
+            <template #default="scope">
+              <el-button
+                link
+                type="primary"
+                size="small"
+                @click="handleDetail(scope.$index, scope.row)"
+                >详细</el-button
+              >
+              <el-button
+                link
+                type="primary"
+                size="small"
+                @click="handleUpdate(scope.$index, scope.row)"
+                >修改</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -96,16 +108,16 @@
     :before-close="handleClose"
   >
     <addDevice ref="addDeviceRef" />
-    <el-dialog v-model="confirmVisible" title="提示" width="400px">
+    <el-dialog v-model="addconfirmVisible" title="提示" width="400px">
       <span>确定要取消添加设备吗?</span>
       <template #footer>
-        <el-button @click="confirmVisible = false">取消</el-button>
+        <el-button @click="addconfirmVisible = false">取消</el-button>
         <el-button
           type="primary"
           @click="
             () => {
               addDeviceDialogVisible = false
-              confirmVisible = false
+              addconfirmVisible = false
             }
           "
         >
@@ -115,7 +127,7 @@
     </el-dialog>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="confirmVisible = true">取消</el-button>
+        <el-button @click="addconfirmVisible = true">取消</el-button>
         <el-button
           type="primary"
           @click="
@@ -128,14 +140,58 @@
       </div>
     </template>
   </el-dialog>
+
+  <!-- 修改设备对话框 -->
+  <el-dialog
+    v-model="updateDeviceDialogVisible"
+    title="修改设备"
+    width="600px"
+    :before-close="handleClose"
+  >
+    <updateDevice ref="updateDeviceRef" />
+    <el-dialog v-model="updateconfirmVisible" title="提示" width="400px">
+      <span>确定要取消修改设备吗?</span>
+      <template #footer>
+        <el-button @click="updateconfirmVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          @click="
+            () => {
+              updateDeviceDialogVisible = false
+              updateconfirmVisible = false
+            }
+          "
+        >
+          确定
+        </el-button>
+      </template>
+    </el-dialog>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="updateconfirmVisible = true">取消</el-button>
+        <el-button
+          type="primary"
+          @click="
+            () => {
+              update()
+            }
+          "
+          >更改
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
 import type { TableInstance } from 'element-plus'
+import type { DeviceType, UpdateQueryDeviceType } from '@/types/Monitor/device'
+
+import { onMounted, provide, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
 import request from '@/request'
 import addDevice from './components/addDevice.vue'
+import updateDevice from './components/updateDevice.vue'
 
 // * 与后端的API返回数据对应
 interface databaseReturn {
@@ -153,17 +209,6 @@ interface ParamsType {
   address?: string
 }
 
-// * 设备数据类型
-interface DeviceType {
-  name: string
-  id: string
-  status: string
-  ip: string
-  address: string
-  create_time?: string
-  EFC?: string
-}
-
 const current_page = ref(1)
 const page_size = 12 // 固定值，一页十二个数据
 const pagination_total = ref(0)
@@ -175,9 +220,13 @@ const tableData = ref<DeviceType[]>([])
 
 // * 增加设备对话框标志位
 const addDeviceDialogVisible = ref(false)
-const confirmVisible = ref(false)
-
+const addconfirmVisible = ref(false)
 const addDeviceRef = ref<InstanceType<typeof addDevice> | null>(null)
+
+// * 更新设备对话框标志位
+const updateDeviceDialogVisible = ref(false)
+const updateconfirmVisible = ref(false)
+const updateDeviceRef = ref<InstanceType<typeof updateDevice> | null>(null)
 
 // 搜索缓存区
 const search_buffer = reactive({
@@ -245,6 +294,7 @@ const refresh = async () => {
   page_refresh()
 }
 
+// 对话框函数 -- add
 const add = async () => {
   // 获取设备表单数据
   if (addDeviceRef.value?.form) {
@@ -259,6 +309,38 @@ const add = async () => {
       refresh()
     } else {
       ElMessageBox.alert(`添加设备失败,${result}`, '提示', {
+        type: 'error',
+      })
+    }
+  }
+}
+
+// 对话框函数 -- update
+const update = async () => {
+  // 获取设备表单数据
+  if (updateDeviceRef.value?.form) {
+    const FormResult = await updateDeviceRef.value.validate()
+    if (!FormResult) return //返回空结果，阻塞代码
+    const datas: UpdateQueryDeviceType = {
+      findParam: { id: updateDeviceRef.value?.form.id },
+      updateParam: updateDeviceRef.value?.form,
+    }
+
+    const response = await request.post<databaseReturn, UpdateQueryDeviceType>(
+      '/monitor/updateDevice',
+      datas
+    )
+    const result = response.data
+    // 更新设备成功关闭窗口
+    if (result.result) {
+      updateDeviceDialogVisible.value = false
+      refresh()
+      ElMessage({
+        message: '修改数据完成',
+        type: 'success',
+      })
+    } else {
+      ElMessageBox.alert(`更新设备失败,${result}`, '提示', {
         type: 'error',
       })
     }
@@ -302,6 +384,20 @@ const removeDevice = async () => {
 const handleSelectionChange = (val: DeviceType[]) => {
   // 同步到删除数组中
   selectToremoveArray.value = val
+}
+
+// 表内列工作列--- 详细
+const handleDetail = (index: number, row: DeviceType) => {
+  console.log(index, row)
+}
+
+// 表内列工作列--- 修改
+const row = ref<DeviceType>()
+provide('updateDialogRow', row)
+const handleUpdate = (index: number, row_: DeviceType) => {
+  // 发送数据到子组件updateDevice
+  row.value = row_
+  updateDeviceDialogVisible.value = true // 触发修改弹窗
 }
 
 //初始化
