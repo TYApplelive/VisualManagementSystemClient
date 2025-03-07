@@ -192,6 +192,11 @@ import { isEqual } from 'lodash'
 import request from '@/request'
 import addDevice from './components/addDevice.vue'
 import updateDevice from './components/updateDevice.vue'
+import { useRouter } from 'vue-router'
+
+import { useDeviceDetailStore } from '@/stores/counter'
+
+const router = useRouter()
 
 // * 与后端的API返回数据对应
 interface databaseReturn {
@@ -387,14 +392,17 @@ const handleSelectionChange = (val: DeviceType[]) => {
 }
 
 // 表内列工作列--- 详细
-const handleDetail = (index: number, row: DeviceType) => {
-  console.log(index, row)
-}
 
-// 表内列工作列--- 修改
 const row = ref<DeviceType>()
 // 向子组件提供数据
 provide('updateDialogRow', row)
+
+const DeviceDetailStore = useDeviceDetailStore()
+const handleDetail = (index: number, row: DeviceType) => {
+  DeviceDetailStore.deviceDetail = row
+  router.push({ name: 'monitorDetail', params: { id: row.id } })
+}
+// 表内列工作列--- 修改
 const handleUpdate = (index: number, row_: DeviceType) => {
   // 发送数据到子组件updateDevice
   row.value = row_
@@ -407,21 +415,21 @@ onMounted(async () => {
 })
 
 // @Test-测试用function
-/*
-const _test_ = async () => {
-  for await (const i of range(10, 100)) {
-    const datas: DeviceType = {
-      name: `数据测试设备${i}`,
-      id: '',
-      status: 'disconnect',
-      ip: `127.0.0.${i}`,
-      address: `成都工业学院`,
-    }
-    const se = await request.post<databaseReturn, DeviceType>('/monitor/addDevice', datas)
-    console.log(se)
-  }
-}
-*/
+
+// import { range } from 'lodash'
+// const _test_ = async () => {
+//   for await (const i of range(10, 100)) {
+//     const datas: DeviceType = {
+//       name: `数据测试设备${i}`,
+//       id: '',
+//       status: 'disconnect',
+//       ip: `127.0.0.${i}`,
+//       address: `成都工业学院`,
+//     }
+//     const se = await request.post<databaseReturn, DeviceType>('/monitor/addDevice', datas)
+//     console.log(se)
+//   }
+// }
 </script>
 <style lang="less" scoped>
 @base-font-color: #ffffff;

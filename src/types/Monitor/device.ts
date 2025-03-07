@@ -5,6 +5,7 @@ export interface DeviceType {
   status: string
   ip: string
   address: string
+  last_update_time?: string
   create_time?: string
   EFC?: string
 }

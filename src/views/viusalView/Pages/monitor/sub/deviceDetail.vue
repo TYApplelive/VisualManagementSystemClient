@@ -12,9 +12,27 @@
       <!-- 内容介绍 -->
       <div class="detail_content">
         <h3>设备状态</h3>
-        <p>当前设备运行状态：正常</p>
-        <p>设备编号：DEV-001</p>
-        <p>最后更新时间：2023-10-01 12:00:00</p>
+        <p style="margin-bottom: 20px; font-weight: 600">
+          <span>{{ Detail.id }}</span>
+        </p>
+        <p>
+          当前设备运行状态: <span>{{ Detail.status }}</span>
+        </p>
+        <p>
+          设备创建时间: <span>{{ Detail.create_time }}</span>
+        </p>
+        <p>
+          最后更新时间: <span>{{ Detail.last_update_time }}</span>
+        </p>
+        <p>
+          设备IP地址: <span>{{ Detail.ip }}</span>
+        </p>
+        <p>
+          设备地址: <span>{{ Detail.address }}</span>
+        </p>
+        <p>
+          设备出厂码: <span>{{ Detail.EFC == '' ? 'NULL' : Detail.EFC }}</span>
+        </p>
       </div>
 
       <!-- 信息展示 -->
@@ -48,11 +66,19 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useDeviceDetailStore } from '@/stores/counter'
+const DeviceDetailStore = useDeviceDetailStore()
+const Detail = reactive(DeviceDetailStore.deviceDetail)
 const router = useRouter()
 const handleReturn = () => {
   router.push('/monitor')
 }
+
+onMounted(() => {
+  console.log('构建DeviceDetail组件')
+})
 </script>
 
 <style lang="less" scoped>
@@ -112,6 +138,11 @@ const handleReturn = () => {
         margin: 8px 0;
         font-size: 14px;
         color: #606266;
+      }
+
+      span {
+        user-select: text;
+        font-size: 14px;
       }
     }
 

@@ -1,12 +1,18 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import type { DeviceType } from '@/types/Monitor/device'
 
-export const useCounterStore = defineStore('counter', () => {
-  const count = ref(0)
-  const doubleCount = computed(() => count.value * 2)
-  function increment() {
-    count.value++
+export const useDeviceDetailStore = defineStore('deviceDetail', () => {
+  const deviceDetail = ref<DeviceType>({
+    name: '',
+    id: '',
+    status: '',
+    ip: '',
+    address: '',
+    create_time: '',
+    EFC: '',
+  })
+  return {
+    deviceDetail,
   }
-
-  return { count, doubleCount, increment }
 })
