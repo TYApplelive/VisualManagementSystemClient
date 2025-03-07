@@ -40,15 +40,18 @@
       <div class="operation">
         <h3>操作面板</h3>
         <el-button type="primary">启动设备</el-button>
-        <el-button type="danger">停止设备</el-button>
+        <el-button type="danger" style="margin-left: 12px">停止设备</el-button>
+        <el-button type="warning">重启设备</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const handleReturn = () => {
-  console.log('返回上一页')
+  router.push('/monitor')
 }
 </script>
 
@@ -59,7 +62,7 @@ const handleReturn = () => {
   flex-direction: column;
   align-items: center;
   background-color: #f5f7fa;
-  padding: 20px;
+  padding: 10px 20px;
   box-sizing: border-box;
 
   .detail_nav {
@@ -70,7 +73,7 @@ const handleReturn = () => {
     justify-content: flex-start;
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 0 20px;
+    padding: 0 10px;
     border-radius: 8px;
 
     .return_btn {
@@ -122,9 +125,12 @@ const handleReturn = () => {
     .detail_information {
       grid-row: span 4; /* 占据三行 */
       grid-column: 2; /* 第二列 */
+      display: flex;
+      flex-direction: column;
+      flex: 1;
       .chart-container {
         min-height: 400px; /* 高度固定 */
-        height: 100%;
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -135,7 +141,7 @@ const handleReturn = () => {
 
     /* 消息列表 */
     .detail_messagebox {
-      grid-row: span 2; /* 占据两行 */
+      grid-row: span 3; /* 占据两行 */
       grid-column: 3; /* 第3列 */
       .message-list {
         max-height: 200px;
@@ -145,7 +151,7 @@ const handleReturn = () => {
 
     /* 操作面板 */
     .operation {
-      grid-row: span 2; /*占据两行*/
+      grid-row: 4; /*占据两行*/
       grid-column: 3; /* 第3列 */
       display: flex;
       flex-direction: column;
@@ -153,6 +159,7 @@ const handleReturn = () => {
 
       .el-button {
         width: 100%;
+        margin-left: 0;
       }
     }
   }
