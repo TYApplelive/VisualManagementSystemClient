@@ -185,7 +185,7 @@
 
 <script setup lang="ts">
 import type { TableInstance } from 'element-plus'
-import type { DeviceType, UpdateQueryDeviceType } from '@/types/Monitor/device'
+import type { DeviceType, UpdateQueryDeviceType, databaseReturn } from '@/types/Monitor/index'
 
 import { onMounted, provide, reactive, ref } from 'vue'
 import { isEqual } from 'lodash'
@@ -194,17 +194,7 @@ import addDevice from './components/addDevice.vue'
 import updateDevice from './components/updateDevice.vue'
 import { useRouter } from 'vue-router'
 
-import { useDeviceDetailStore } from '@/stores/counter'
-
 const router = useRouter()
-
-// * 与后端的API返回数据对应
-interface databaseReturn {
-  data: Array<never>
-  message: string
-  result: boolean
-  matchnum: number
-}
 
 // * 数据源请求参数
 interface ParamsType {
@@ -396,10 +386,7 @@ const handleSelectionChange = (val: DeviceType[]) => {
 const row = ref<DeviceType>()
 // 向子组件提供数据
 provide('updateDialogRow', row)
-
-const DeviceDetailStore = useDeviceDetailStore()
 const handleDetail = (index: number, row: DeviceType) => {
-  DeviceDetailStore.deviceDetail = row
   router.push({ name: 'monitorDetail', params: { id: row.id } })
 }
 // 表内列工作列--- 修改

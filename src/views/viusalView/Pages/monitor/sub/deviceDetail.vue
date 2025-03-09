@@ -13,25 +13,29 @@
       <div class="detail_content">
         <h3>设备状态</h3>
         <p style="margin-bottom: 20px; font-weight: 600">
-          <span>{{ Detail.id }}</span>
+          <span>{{ Details.id == '' ? 'NULL' : Details.id }}</span>
         </p>
         <p>
-          当前设备运行状态: <span>{{ Detail.status }}</span>
+          设备名称: <span>{{ Details.name == '' ? 'NULL' : Details.name }}</span>
         </p>
         <p>
-          设备创建时间: <span>{{ Detail.create_time }}</span>
+          当前设备运行状态: <span>{{ Details.status == '' ? 'NULL' : Details.status }}</span>
         </p>
         <p>
-          最后更新时间: <span>{{ Detail.last_update_time }}</span>
+          设备创建时间: <span>{{ Details.create_time == '' ? 'NULL' : Details.create_time }}</span>
         </p>
         <p>
-          设备IP地址: <span>{{ Detail.ip }}</span>
+          最后更新时间:
+          <span>{{ Details.last_update_time == '' ? 'NULL' : Details.last_update_time }}</span>
         </p>
         <p>
-          设备地址: <span>{{ Detail.address }}</span>
+          设备IP地址: <span>{{ Details.ip == '' ? 'NULL' : Details.ip }}</span>
         </p>
         <p>
-          设备出厂码: <span>{{ Detail.EFC == '' ? 'NULL' : Detail.EFC }}</span>
+          设备地址: <span>{{ Details.address == '' ? 'NULL' : Details.address }}</span>
+        </p>
+        <p>
+          设备出厂码: <span>{{ Details.EFC == '' ? 'NULL' : Details.EFC }}</span>
         </p>
       </div>
 
@@ -67,16 +71,45 @@
 
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useDeviceDetailStore } from '@/stores/counter'
-const DeviceDetailStore = useDeviceDetailStore()
-const Detail = reactive(DeviceDetailStore.deviceDetail)
+import { useRouter, useRoute } from 'vue-router'
+import request from '@/request'
+import type { databaseReturn, DeviceType } from '@/types/Monitor'
+
 const router = useRouter()
+const route = useRoute()
 const handleReturn = () => {
   router.push('/monitor')
 }
 
-onMounted(() => {
+const Details = reactive<DeviceType>({
+  name: '',
+  id: '',
+  status: '',
+  ip: '',
+  address: '',
+  last_update_time: '',
+  create_time: '',
+  EFC: '',
+})
+
+const Page_Init = async () => {
+  const params = reactive<Record<string, number | string>>({
+    limit: 1,
+    skip: 0,
+  })
+  params.id = (route.params.id as string) ?? ''
+  const result = await request.get<databaseReturn>('/monitor/db/find', { params })
+  const DetailsResponse = result.data
+  const DetailsDetail = DetailsResponse.data
+  if (DetailsDetail.result) {
+    // 赋值给详情
+    Object.assign(Details, DetailsDetail.data[0])
+  }
+}
+
+// 访问API获取设备详情
+onMounted(async () => {
+  await Page_Init()
   console.log('构建DeviceDetail组件')
 })
 </script>
