@@ -9,6 +9,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [
     vue(),
     // vueDevTools(),
@@ -23,5 +24,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
+  },
+  server: {
+    host: '0.0.0.0',
+    port: 5453,
   },
 })

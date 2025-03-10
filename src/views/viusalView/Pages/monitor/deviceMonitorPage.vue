@@ -64,7 +64,7 @@
         >
           <el-table-column type="selection" width="55" />
           <el-table-column prop="id" label="编号" width="350" show-overflow-tooltip />
-          <el-table-column prop="name" label="名称" />
+          <el-table-column prop="name" label="名称" show-overflow-tooltip />
           <el-table-column prop="ip" label="IP" />
           <el-table-column prop="status" label="状态" />
           <el-table-column prop="address" label="地址" />

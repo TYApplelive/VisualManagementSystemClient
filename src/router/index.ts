@@ -25,6 +25,7 @@ const router = createRouter({
     {
       path: '/visual',
       name: 'visual',
+      redirect: '/monitor',
       component: () => import('@/views/viusalView/visualView.vue'),
       children: [
         {
