@@ -8,12 +8,7 @@
         </el-form-item>
         <el-form-item class="search_nav_item">
           <p class="input-title">设备地址</p>
-          <el-input
-            class="address"
-            placeholder="请输入设备地址"
-            v-model="searchForm.address"
-            clearable
-          />
+          <el-input class="address" placeholder="请输入设备地址" v-model="searchForm.address" clearable />
         </el-form-item>
         <el-form-item>
           <a class="searchBtn button" @click="search">
@@ -35,8 +30,8 @@
       <div class="header">
         <div class="tips">
           <el-icon style="color: rgb(102.2, 177.4, 255); margin-right: 3px">
-            <InfoFilled /> </el-icon
-          >共{{ pagination_total }}条记录
+            <InfoFilled />
+          </el-icon>共{{ pagination_total }}条记录
         </div>
         <div class="operation">
           <!-- 工作区按钮 -->
@@ -52,16 +47,8 @@
       </div>
       <div class="main">
         <!-- 表格DOM -->
-        <el-table
-          ref="multipleTableRef"
-          class="device-table"
-          :data="tableData"
-          stripe
-          style="width: 100%"
-          max-height="520"
-          table-layout="fixed"
-          @selection-change="handleSelectionChange"
-        >
+        <el-table ref="multipleTableRef" class="device-table" :data="tableData" stripe style="width: 100%"
+          max-height="520" table-layout="fixed" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" />
           <el-table-column prop="id" label="编号" width="350" show-overflow-tooltip />
           <el-table-column prop="name" label="名称" show-overflow-tooltip />
@@ -71,56 +58,31 @@
           <el-table-column prop="create_time" label="创建时间" />
           <el-table-column fixed="right" label="Operations" min-width="120">
             <template #default="scope">
-              <el-button
-                link
-                type="primary"
-                size="small"
-                @click="handleDetail(scope.$index, scope.row)"
-                >详细</el-button
-              >
-              <el-button
-                link
-                type="primary"
-                size="small"
-                @click="handleUpdate(scope.$index, scope.row)"
-                >修改</el-button
-              >
+              <el-button link type="primary" size="small" @click="handleDetail(scope.$index, scope.row)">详细</el-button>
+              <el-button link type="primary" size="small" @click="handleUpdate(scope.$index, scope.row)">修改</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          class="switch-pagination"
-          layout="prev, pager, next "
-          :page-size="page_size"
-          :total="pagination_total"
-          v-model:current-page="current_page"
-          @current-change="page_switch(current_page, search_buffer.id, search_buffer.address)"
-        />
+        <el-pagination class="switch-pagination" layout="prev, pager, next " :page-size="page_size"
+          :total="pagination_total" v-model:current-page="current_page"
+          @current-change="page_switch(current_page, search_buffer.id, search_buffer.address)" />
       </div>
     </div>
   </div>
 
   <!-- 添加设备对话框 -->
-  <el-dialog
-    v-model="addDeviceDialogVisible"
-    title="添加设备"
-    width="600px"
-    :before-close="handleClose"
-  >
+  <el-dialog v-model="addDeviceDialogVisible" title="添加设备" width="600px" :before-close="handleClose">
     <addDevice ref="addDeviceRef" />
     <el-dialog v-model="addconfirmVisible" title="提示" width="400px">
       <span>确定要取消添加设备吗?</span>
       <template #footer>
         <el-button @click="addconfirmVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          @click="
-            () => {
-              addDeviceDialogVisible = false
-              addconfirmVisible = false
-            }
-          "
-        >
+        <el-button type="primary" @click="
+          () => {
+            addDeviceDialogVisible = false
+            addconfirmVisible = false
+          }
+        ">
           确定
         </el-button>
       </template>
@@ -128,40 +90,29 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="addconfirmVisible = true">取消</el-button>
-        <el-button
-          type="primary"
-          @click="
-            () => {
-              add()
-            }
-          "
-          >添加
+        <el-button type="primary" @click="
+          () => {
+            add()
+          }
+        ">添加
         </el-button>
       </div>
     </template>
   </el-dialog>
 
   <!-- 修改设备对话框 -->
-  <el-dialog
-    v-model="updateDeviceDialogVisible"
-    title="修改设备"
-    width="600px"
-    :before-close="handleClose"
-  >
+  <el-dialog v-model="updateDeviceDialogVisible" title="修改设备" width="600px" :before-close="handleClose">
     <updateDevice ref="updateDeviceRef" />
     <el-dialog v-model="updateconfirmVisible" title="提示" width="400px">
       <span>确定要取消修改设备吗?</span>
       <template #footer>
         <el-button @click="updateconfirmVisible = false">取消</el-button>
-        <el-button
-          type="primary"
-          @click="
-            () => {
-              updateDeviceDialogVisible = false
-              updateconfirmVisible = false
-            }
-          "
-        >
+        <el-button type="primary" @click="
+          () => {
+            updateDeviceDialogVisible = false
+            updateconfirmVisible = false
+          }
+        ">
           确定
         </el-button>
       </template>
@@ -169,14 +120,11 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="updateconfirmVisible = true">取消</el-button>
-        <el-button
-          type="primary"
-          @click="
-            () => {
-              update()
-            }
-          "
-          >更改
+        <el-button type="primary" @click="
+          () => {
+            update()
+          }
+        ">更改
         </el-button>
       </div>
     </template>
@@ -246,7 +194,6 @@ const page_switch = async (current_page: number, id?: string, address?: string) 
 
   if (id) params.id = id.trim()
   if (address) params.address = address.trim()
-
   const response = await request.get<databaseReturn>('/monitor/db/find', { params })
   const result = response.data.data
   //console.log(result)
