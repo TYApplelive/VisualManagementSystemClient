@@ -18,7 +18,7 @@ const open_MQTT_Client = () => {
 // 关闭mqtt客户端
 const close_MQTT_Client = () => {
   request.get('/mqtt/close').then((res) => {
-    alert(res.data);
+    alert(res.data.tips);
   })
 }
 </script>
