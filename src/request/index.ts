@@ -20,7 +20,9 @@ type Result<T> = {
 export class Request {
   instance: AxiosInstance
   // 基础地址选择 服务器的地址 方便后续操作
-  baseConfig: AxiosRequestConfig = { timeout: 6000, baseURL: 'http://106.53.102.145:2007' }
+  // http://106.53.102.145:2007
+  baseConfig: AxiosRequestConfig = { timeout: 6000, baseURL: 'http://127.0.0.1:2007' }
+
   constructor(config: AxiosRequestConfig) {
     this.instance = axios.create(Object.assign(this.baseConfig, config))
     // 请求拦截器
