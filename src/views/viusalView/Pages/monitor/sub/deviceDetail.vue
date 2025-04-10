@@ -3,7 +3,9 @@
     <!-- 导航栏 -->
     <div class="detail_nav">
       <el-button type="primary" class="return_btn" @click="handleReturn">
-        <el-icon><Back /></el-icon>返回
+        <el-icon>
+          <Back />
+        </el-icon>返回
       </el-button>
     </div>
 
@@ -41,10 +43,27 @@
 
       <!-- 信息展示 -->
       <div class="detail_information">
-        <h3>数据可视化</h3>
+        <h3>数据区域</h3>
         <div class="chart-container">
           <!-- 这里可以放置图表组件 -->
-          <p>图表区域</p>
+          <div class="testView">
+            <h2>MQTT 接收测试</h2>
+            <button @click="open_MQTT_Client">点击开启MQTT客户端</button>
+            <button @click="close_MQTT_Client">点击关闭MQTT客户端</button>
+            <br>
+            <br>
+            <button @click="TurnOnLed_MQTT">打开LED</button>
+            <button @click="TurnOffLed_MQTT">关闭LED</button>
+            <button @click="TurnBlinkLed_MQTT">闪烁LED</button>
+            <br>
+            <h2>LED状态:{{ led_status }}</h2>
+            <br>
+            <button @click="GetDataSC7A20_MQTT">获取姿态</button>
+            <button @click="CalibrateSC7A20_MQTT">自调零</button>
+            <h2>X轴斜率:{{ object_status.slopex }}</h2>
+            <h2>Y轴斜率:{{ object_status.slopey }}</h2>
+            <h2>Z轴斜率:{{ object_status.slopez }}</h2>
+          </div>
         </div>
       </div>
 
@@ -112,6 +131,82 @@ onMounted(async () => {
   await Page_Init()
   console.log('构建DeviceDetail组件')
 })
+
+import { ref } from 'vue';
+import { type MqttResponseSC7A20 } from "./Response"
+
+const led_status = ref('无');
+const object_status = reactive({ slopex: 0, slopey: 0, slopez: 0 });
+
+// 打开mqtt客户端
+const open_MQTT_Client = () => {
+  request.get('/mqtt/open').then((res) => {
+    alert(res.data.tips);
+  })
+}
+
+// 关闭mqtt客户端
+const close_MQTT_Client = () => {
+  request.get('/mqtt/close').then((res) => {
+    alert(res.data.tips);
+  })
+}
+
+// 开启LED
+const TurnOnLed_MQTT = () => {
+  request.get('/mqtt/led/on').then((res) => {
+    led_status.value = res.data.tips
+  })
+}
+
+//关闭LED
+const TurnOffLed_MQTT = () => {
+  request.get('/mqtt/led/off').then((res) => {
+    led_status.value = res.data.tips
+  })
+}
+
+// LED闪烁
+const TurnBlinkLed_MQTT = () => {
+  request.get('/mqtt/led/blink').then((res) => {
+    led_status.value = res.data.tips
+  })
+}
+
+// 获取姿态
+const GetDataSC7A20_MQTT = () => {
+  request.get<MqttResponseSC7A20>('/mqtt/sc7a20/getdata').then((res) => {
+    const Result = res.data
+
+    if (Result.result) {
+      const result = Result.data
+      console.log(result);
+
+      try {
+        const slopex = result.x;
+        const slopey = result.y;
+        const slopez = result.z;
+        object_status.slopex = slopex;
+        object_status.slopey = slopey;
+        object_status.slopez = slopez;
+      } catch (e) {
+        alert(e)
+      }
+    }
+    else {
+      alert(Result.tips)
+    }
+  })
+}
+
+// 自调零
+const CalibrateSC7A20_MQTT = () => {
+  request.get('/mqtt/sc7a20/calibrate').then((res) => {
+    console.log(res.data);
+  })
+}
+
+
 </script>
 
 <style lang="less" scoped>
@@ -148,8 +243,10 @@ onMounted(async () => {
     margin-top: 20px;
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 3fr 1fr; /*3 列 */
-    grid-template-rows: repeat(4); /*4 行 */
+    grid-template-columns: 1fr 3fr 1fr;
+    /*3 列 */
+    grid-template-rows: repeat(4);
+    /*4 行 */
     gap: 20px;
 
     .detail_content,
@@ -181,32 +278,57 @@ onMounted(async () => {
 
     /* 设备状态 */
     .detail_content {
-      grid-row: 2 / 5; /* 2行 */
-      grid-column: 1; /* 第1列 */
+      grid-row: 2 / 5;
+      /* 2行 */
+      grid-column: 1;
+      /* 第1列 */
     }
 
     /* 可视化数据 */
     .detail_information {
-      grid-row: span 4; /* 占据三行 */
-      grid-column: 2; /* 第二列 */
+      grid-row: span 4;
+      /* 占据三行 */
+      grid-column: 2;
+      /* 第二列 */
       display: flex;
       flex-direction: column;
       flex: 1;
+
       .chart-container {
-        min-height: 400px; /* 高度固定 */
+        min-height: 400px;
+        /* 高度固定 */
         flex: 1;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: start;
+        justify-content: start;
         background-color: #f9fafc;
         border-radius: 6px;
+
+        h2 {
+          margin: 20px;
+        }
+
+        button {
+          position: relative;
+          margin: 10px;
+          padding: 10px 22px;
+          border-radius: 6px;
+          border: none;
+          color: #fff;
+          cursor: pointer;
+          background-color: #7d2ae8;
+          transition: all 0.2s ease;
+        }
       }
     }
 
     /* 消息列表 */
     .detail_messagebox {
-      grid-row: span 3; /* 占据两行 */
-      grid-column: 3; /* 第3列 */
+      grid-row: span 3;
+      /* 占据两行 */
+      grid-column: 3;
+
+      /* 第3列 */
       .message-list {
         max-height: 200px;
         overflow-y: auto;
@@ -215,8 +337,10 @@ onMounted(async () => {
 
     /* 操作面板 */
     .operation {
-      grid-row: 4; /*占据两行*/
-      grid-column: 3; /* 第3列 */
+      grid-row: 4;
+      /*占据两行*/
+      grid-column: 3;
+      /* 第3列 */
       display: flex;
       flex-direction: column;
       gap: 12px;
