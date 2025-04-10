@@ -329,7 +329,6 @@ const handleSelectionChange = (val: DeviceType[]) => {
 }
 
 // 表内列工作列--- 详细
-
 const row = ref<DeviceType>()
 // 向子组件提供数据
 provide('updateDialogRow', row)

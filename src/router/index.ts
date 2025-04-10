@@ -53,7 +53,7 @@ const router = createRouter({
     {
       path: '/mqtt',
       name: 'mqtt',
-      component: () => import('@/views/TestView/testview.vue'),
+      component: () => import('@/views/TestView/testView.vue'),
     },
     {
       //其他页面跳转到404
